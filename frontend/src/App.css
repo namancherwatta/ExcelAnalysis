@@ -81,3 +81,37 @@
 .download-button:hover {
   background-color: #45a049;
 }
+
+/* Dropdown styling */
+.column-selection {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.column-selection label {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #2c3e50; /* Matching label color with title */
+}
+
+select {
+  padding: 10px 15px; /* Add padding to make it more clickable */
+  border-radius: 5px; /* Rounded corners */
+  border: 2px solid #3498db; /* Border matching the button color */
+  background-color: #f0f5f9; /* Light background color for the dropdown */
+  font-size: 1rem;
+  color: #2c3e50; /* Text color */
+  appearance: none; /* Remove default dropdown arrow */
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+select:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #2980b9; /* Change border color on focus */
+  background-color: #e4eaf1; /* Lighter background on focus */
+}
+
+select:hover {
+  background-color: #e1f0f9; /* Slightly darker background on hover */
+}

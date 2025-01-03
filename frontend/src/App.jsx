@@ -71,48 +71,52 @@ const App = () => {
   
     return (
       <div className="chart-container">
+        {/* Bar Chart */}
         <div className="chart-item">
-        <BarChart width={350} height={300} data={data} margin={{ top: 20, right: 20, bottom: 40, left: 5 }}>
-  <CartesianGrid strokeDasharray="3 3" />
-  <XAxis dataKey="category" />
-  <YAxis />
-  <Tooltip />
-  <Bar dataKey="count" fill="#8884d8" />
-</BarChart>
+          <BarChart width={350} height={300} data={data} margin={{ top: 20, right: 20, bottom: 40, left: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="category" />
+            <YAxis label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 10 }} />
+            <Tooltip />
+            <Bar dataKey="count" fill="#8884d8" />
+          </BarChart>
         </div>
+  
+        {/* Line Chart */}
         <div className="chart-item">
-        <LineChart width={350} height={300} data={data} margin={{ top: 20, right: 20, bottom: 40, left: 5 }}>
-  <CartesianGrid strokeDasharray="3 3" />
-  <XAxis dataKey="category" />
-  <YAxis />
-  <Tooltip />
-  <Line type="monotone" dataKey="count" stroke="#8884d8" />
-</LineChart>
+          <LineChart width={350} height={300} data={data} margin={{ top: 20, right: 20, bottom: 40, left: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="category" />
+            <YAxis label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 10 }} />
+            <Tooltip />
+            <Line type="monotone" dataKey="count" stroke="#8884d8" />
+          </LineChart>
         </div>
+  
+        {/* Pie Chart */}
         <div className="chart-item">
-        <PieChart width={350} height={300}>
-  <Pie
-    data={data}
-    dataKey="count"
-    nameKey="category"
-    cx="50%"
-    cy="50%"
-    outerRadius={80}
-    fill="#8884d8"
-  >
-    {data.map((entry, index) => (
-      <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#8884d8' : '#82ca9d'} />
-    ))}
-  </Pie>
-  <Tooltip />
-  <Legend verticalAlign="top" height={36} /> {/* Add legend for Pie chart */}
-</PieChart>
-
-
+          <PieChart width={350} height={300}>
+            <Pie
+              data={data}
+              dataKey="count"
+              nameKey="category"
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              fill="#8884d8"
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#8884d8' : '#82ca9d'} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend verticalAlign="top" height={36} />
+          </PieChart>
         </div>
       </div>
     );
   };
+  
 
   return (
     <div className="app-container">
