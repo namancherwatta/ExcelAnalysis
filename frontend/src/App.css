@@ -31,10 +31,40 @@
   font-weight: bold;
 }
 
+/* Chart container layout */
 .chart-container {
   margin: 20px auto;
   display: flex;
+  justify-content: space-around;  /* Space charts evenly across the row */
+  gap: 25px; /* Space between the charts */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+/* Ensure each chart takes up equal space */
+.chart-item {
+  width: 30%; /* Each chart takes 30% of the width on larger screens */
+  display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .chart-item {
+    width: 45%; /* 45% on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .chart-item {
+    width: 90%; /* Full width on small screens */
+  }
 }
 
 .download-button {

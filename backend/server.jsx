@@ -34,26 +34,9 @@ app.post('/upload', upload.single('file'), (req, res) => {
     // Clean up uploaded file
     fs.unlinkSync(filePath);
 
-    res.json({ categoryCounts, columns }); // Send columns and empty category data initially
+    res.json({ categoryCounts, columns }); // Send categoryCounts and columns together
   } catch (error) {
     res.status(500).json({ error: 'Error processing the file' });
-  }
-});
-
-// Endpoint to get category data for a selected column
-app.post('/getCategoryData', (req, res) => {
-  const { column } = req.body;
-  
-  // Get the corresponding data based on the selected column
-  try {
-    const categoryCounts = {}; // Calculate category counts for the selected column
-    // Use data stored in memory or recompute
-    // For simplicity, let's simulate the result
-    categoryCounts[column] = { "Category 1": 10, "Category 2": 15, "Category 3": 5 };
-    
-    res.json({ categoryCounts });
-  } catch (error) {
-    res.status(500).json({ error: 'Error fetching category data' });
   }
 });
 
