@@ -1,0 +1,53 @@
+.app-container {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.app-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.file-input-container {
+  margin-bottom: 20px;
+}
+
+.chart-options {
+  margin-bottom: 20px;
+}
+
+.chart-options label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.chart-container {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+}
+
+.download-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.download-button:hover {
+  background-color: #45a049;
+}
