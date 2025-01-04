@@ -44,53 +44,57 @@ app.post('/upload', upload.single('file'), (req, res) => {
 // New endpoint to handle comparison of two columns
 app.post('/compare', upload.single('file'), (req, res) => {
   try {
-    // Get selected columns for comparison
+    // Validate input from req.body
+    const { column1, column2, metric } = req.body;
+    if (!column1 || !column2 || !metric) {
+      return res.status(400).json({ error: 'Missing column1, column2, or metric in request body' });
+    }  
+
+    // Read the uploaded file
     const filePath = req.file.path;
     const workbook = xlsx.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
     const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  
+    // Generic function to calculate metric-wise aggregation
+    const calculateMetricAggregation = (data, column1, column2, metric) => {
+      const aggregationResult = {};
 
-    // Function to calculate region-wise sales for each product
-    const calculateRegionSales = (data) => {
-      const salesByProductAndRegion = {};
+      data.forEach((row) => {
+        const value1 = row[column1]; // e.g., Product
+        const value2 = row[column2]; // e.g., Region
+        const metricValue = parseFloat(row[metric]); // e.g., TotalSales
 
-      // Iterate over the data
-      data.forEach(row => {
-        const { Product, Region, TotalSales } = row;
-      console.log(Product,Region,TotalSales)
-        // Ensure TotalSales is treated as a number
-        const totalSales = parseFloat(TotalSales);
+        // Skip rows with invalid metric values
+        if (isNaN(metricValue)) return;
 
-        // Skip rows where TotalSales is invalid (NaN)
-        if (isNaN(totalSales)) return;
-
-        // If the product doesn't exist in the sales object, initialize it
-        if (!salesByProductAndRegion[Product]) {
-          salesByProductAndRegion[Product] = {};
+        // Initialize the first level (column1) if it doesn't exist
+        if (!aggregationResult[value1]) {
+          aggregationResult[value1] = {};
         }
 
-        // If the region doesn't exist for this product, initialize it
-        if (!salesByProductAndRegion[Product][Region]) {
-          salesByProductAndRegion[Product][Region] = 0;
+        // Initialize the second level (column2) if it doesn't exist
+        if (!aggregationResult[value1][value2]) {
+          aggregationResult[value1][value2] = 0;
         }
 
-        // Add the TotalSales to the corresponding product and region
-        salesByProductAndRegion[Product][Region] += totalSales;
+        // Add the metric value to the corresponding category
+        aggregationResult[value1][value2] += metricValue;
       });
 
-      return salesByProductAndRegion;
+      return aggregationResult;
     };
 
-    // Calculate region-wise sales for each product
-    const regionSalesData = calculateRegionSales(data);
+    // Perform the aggregation using dynamic column names
+    const result = calculateMetricAggregation(data, column1, column2, metric);
 
-    // Clean up uploaded file
+    // Clean up the uploaded file
     fs.unlinkSync(filePath);
-  console.log(regionSalesData)
-    // Send the region-wise sales data back to the frontend
-    res.json({ regionSalesData });
+    // Send the result back to the client
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ error: 'Error comparing columns' });
+    console.error(error);
+    res.status(500).json({ error: 'Error processing the request' });
   }
 });
 

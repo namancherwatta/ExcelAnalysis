@@ -1,5 +1,8 @@
 /* New styles for the comparison dropdown section */
 .column-selection-compare {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
   margin-bottom: 20px;
   margin-top: 25px;
   font-size: 1.1rem;

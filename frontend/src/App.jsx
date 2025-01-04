@@ -10,6 +10,7 @@ const App = () => {
   const [selectedColumn, setSelectedColumn] = useState(''); // Selected column for categorization
   const [selectedColumn1, setSelectedColumn1] = useState(''); // Selected column 1 for comparison
   const [selectedColumn2, setSelectedColumn2] = useState(''); // Selected column 2 for comparisons
+  const [metric,setMetric]=useState('')
   const [categoryCounts, setCategoryCounts] = useState({}); // Holds all category counts
 
   // Handle file change and upload to backend
@@ -64,6 +65,7 @@ const App = () => {
       formData.append('file', document.querySelector('input[type="file"]').files[0]);
       formData.append('column1', selectedColumn1);
       formData.append('column2', selectedColumn2);
+      formData.append('metric',metric)
       try {
         const response = await fetch('http://localhost:3001/compare', {
           method: 'POST',
@@ -74,19 +76,27 @@ const App = () => {
           throw new Error('Failed to compare columns');
         }
         const result = await response.json();
+        console.log(result)
         // Transform the result into a format suitable for comparison
-        const transformedData = transformComparisonData(result.regionSalesData);
+        const transformedData = transformComparisonData(result);
         setCompareData(transformedData); // Set transformed data for comparison charts
       } catch (error) {
         console.error('Error comparing columns:', error);
       }
     }
   };
-
+  const getDynamicColor = (index) => {
+    const colors = ["#82ca9d", "#8884d8", "#544CE4", "#FFBB28", "#FF8042"];
+    return colors[index % colors.length]; // Cycle through colors if needed
+  };
+  
   // Function to download the chart as an image
-  const downloadChart = async () => {
+  const downloadChart = async (e) => {
+    const classList = e.target.className.split(" "); // Split the class string into an array
+    const secondClass = classList[1]; // Access the second class
+    console.log(secondClass)
     try {
-      const canvas = await html2canvas(document.getElementById("screenshotof"));
+      const canvas = await html2canvas(document.getElementById(secondClass));
       const link = document.createElement('a');
       link.download = 'chart.png';
       link.href = canvas.toDataURL('image/png');
@@ -96,27 +106,30 @@ const App = () => {
     }
   };
 
-  const transformComparisonData = (regionSalesData) => {
+  const transformComparisonData = (salesData) => {
     const comparisonData = [];
-
-    // Get all unique regions from the sales data
-    const regions = Array.from(new Set(
-      Object.values(regionSalesData).reduce((acc, widget) => [...acc, ...Object.keys(widget)], [])
+  
+    // Get all unique categories (e.g., regions) from the sales data
+    const categories = Array.from(new Set(
+      Object.values(salesData).reduce((acc, item) => [...acc, ...Object.keys(item)], [])
     ));
-
-    // For each region, build a data object for comparison
-    regions.forEach(region => {
-      const rowData = { region };
-
-      Object.keys(regionSalesData).forEach(widget => {
-        rowData[`${widget}_count`] = regionSalesData[widget][region] || 0; // Safely access region sales for each widget
+   
+    // For each category, build a data object for comparison
+    categories.forEach((category) => {
+      const rowData = { category }; 
+  
+      // Iterate over the main keys (e.g., products/widgets)
+      Object.keys(salesData).forEach((mainKey) => {
+        rowData[`${mainKey}_count`] = salesData[mainKey][category] || 0; // Safely access data
       });
-
+  
       comparisonData.push(rowData);
     });
-    console.log(comparisonData)
+  
+    console.log(comparisonData);
     return comparisonData;
   };
+  
 
   // Render all charts (Bar, Line, Pie) side by side
   const renderCharts = () => {
@@ -176,68 +189,84 @@ const App = () => {
 
     return (
       <div className="chart-container">
-        {/* Bar Chart for Comparison */}
-        <div className="chart-item-compare">
-          <BarChart width={350} height={300} data={compareData} margin={{ top: 20, right: 20, bottom: 40, left: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="region" />
-            <YAxis label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 10 }} />
-            <Tooltip />
-            {console.log(selectedColumn1)}
-            <Bar dataKey={`Widget A_count`} fill="#82ca9d" />
-            <Bar dataKey={`Widget B_count`} fill="#8884d8" />
-            <Bar dataKey={`Widget C_count`} fill="#544CE4" />
-          </BarChart>
-        </div>
+  {/* Bar Chart for Comparison */}
+  <div className="chart-item-compare">
+  <BarChart
+    width={350}
+    height={300}
+    data={compareData}
+    margin={{ top: 20, right: 20, bottom: 40, left: 5 }}
+  >
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="category" />
+    <YAxis
+      label={{
+        value: "Count",
+        angle: -90,
+        position: "insideLeft",
+        offset: 2,
+      }}
+    />
+    <Tooltip />
+    <Legend
+      verticalAlign="top"
+      height={36}
+      formatter={(value) => <span style={{ color: "#333" }}>{value}</span>}
+    />
+    {Object.keys(compareData[0] || {})
+      .filter((key) => key !== "category") // Exclude the 'category' key
+      .map((key, index) => (
+        <Bar
+          key={index}
+          dataKey={key}
+          fill={getDynamicColor(index)}
+          name={key.replace("_count", "")} // Use a readable name for the legend
+        />
+      ))}
+  </BarChart>
+  </div>
 
-        {/* Line Chart for Comparison */}
-        <div className="chart-item-compare">
-          <LineChart width={350} height={300} data={compareData} margin={{ top: 20, right: 20, bottom: 40, left: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="region" />
-            <YAxis label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 10 }} />
-            <Tooltip />
-            <Line type="monotone" dataKey={`Widget A_count`} stroke="#8884d8" />
-            <Line type="monotone" dataKey={`Widget B_count`} stroke="#82ca9d" />
-            <Line type="monotone" dataKey={`Widget C_count`} stroke="#544CE4" />
-            
-          </LineChart>
-        </div>
+  {/* Line Chart for Comparison */}
+  <div className="chart-item-compare">
+  <LineChart
+    width={350}
+    height={300}
+    data={compareData}
+    margin={{ top: 20, right: 20, bottom: 40, left: 5 }}
+  >
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="category" />
+    <YAxis
+      label={{
+        value: "Count",
+        angle: -90,
+        position: "insideLeft",
+        offset: 2,
+      }}
+    />
+    <Tooltip />
+    <Legend
+      verticalAlign="top"
+      height={36}
+      formatter={(value) => <span style={{ color: "#333" }}>{value}</span>}
+    />
+    {Object.keys(compareData[0] || {})
+      .filter((key) => key !== "category") // Exclude the 'category' key
+      .map((key, index) => (
+        <Line
+          key={index}
+          type="monotone"
+          dataKey={key}
+          stroke={getDynamicColor(index)}
+          name={key.replace("_count", "")} // Use a readable name for the legend
+        />
+      ))}
+  </LineChart>
+</div>
 
-        {/* Pie Chart for Comparison */}
-        {/* <div className="chart-item">
-          <PieChart width={350} height={300}>
-            <Pie
-              data={compareData}
-              dataKey={`Widget A_count`}
-              nameKey="category"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              fill="#8884d8"
-            />
-            <Pie
-              data={compareData}
-              dataKey={`Widget B_count`}
-              nameKey="category"
-              cx="50%"
-              cy="50%"
-              outerRadius={60}
-              fill="#82ca9d"
-            />
-             <Pie
-              data={compareData}
-              dataKey={`Widget C_count`}
-              nameKey="category"
-              cx="50%"
-              cy="50%"
-              outerRadius={60}
-              fill="#544CE4"
-            />
-            <Tooltip />
-          </PieChart>
-        </div> */}
-      </div>
+
+</div>
+
     );
   };
 
@@ -268,10 +297,11 @@ const App = () => {
       </div>
 
 
-      <div id="screenshotof" className="chart-container">{renderCharts()}</div>
-      {data && <button className="download-button" onClick={downloadChart}>Download Chart</button>}
+      <div id="screenshotofsingle" className="chart-container">{renderCharts()}</div>
+      {data && <button className="download-button screenshotofsingle" onClick={(e)=>{ downloadChart(e)}}>Download Chart</button>}
 
       <div className="column-selection-compare" >
+        <div>
         <label htmlFor="column1">Select First Column to Compare:</label>
         <select
           id="column1"
@@ -285,7 +315,8 @@ const App = () => {
             </option>
           ))}
         </select>
-
+        </div>
+        <div>
         <label htmlFor="column2">Select Second Column to Compare:</label>
         <select
           id="column2"
@@ -299,10 +330,26 @@ const App = () => {
             </option>
           ))}
         </select>
-
+        </div>
+        <div>
+        <label htmlFor="metric">Provide metric for comparison:</label>
+        <select
+          id="metric"
+          value={metric}
+          onChange={(e) => setMetric(e.target.value)}
+        >
+          <option value="">Select metric</option>
+          {columns.map((column, index) => (
+            <option key={index} value={column}>
+              {column}
+            </option>
+          ))}
+        </select>
+        </div>
         <button onClick={handleCompareChange}>Compare Columns</button>
       </div>
-      <div id="screenshotof" className="chart-container">{renderComparisonCharts()}</div>
+      <div id="screenshotofcompare" className="chart-container">{renderComparisonCharts()}</div>
+      {data && <button className="download-button screenshotofcompare" onClick={(e)=>{ downloadChart(e)}}>Download Chart</button>}
 
 
     </div>
