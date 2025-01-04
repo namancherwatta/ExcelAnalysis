@@ -4,7 +4,7 @@
   flex-direction: row;
   gap: 16px;
   margin-bottom: 20px;
-  margin-top: 25px;
+  margin-top: 40px;
   font-size: 1.1rem;
 }
 
@@ -145,11 +145,17 @@
   .chart-item {
     width: 45%; /* 45% on medium screens */
   }
+  .chart-item-compare{
+    width: 45%;
+  }
 }
 
 @media (max-width: 768px) {
   .chart-item {
     width: 90%; /* Full width on small screens */
+  }
+  .chart-item-compare{
+    width: 90%;
   }
 }
 
