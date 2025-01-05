@@ -22,7 +22,7 @@ const App = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch(backendURL+'/upload', {
+      const response = await fetch(backendURL+'upload', {
         method: 'POST',
         body: formData, // Use FormData to send the file
       });
@@ -69,7 +69,7 @@ const App = () => {
       formData.append('column2', selectedColumn2);
       formData.append('metric',metric)
       try {
-        const response = await fetch(backendURL+'/compare', {
+        const response = await fetch(backendURL+'compare', {
           method: 'POST',
           body: formData,
         });
