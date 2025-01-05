@@ -8,8 +8,11 @@ const { log } = require('console');
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-app.use(cors());
+
 app.use(express.json());
+app.use(cors({
+  origin: 'https://excel-analysis-18qn.vercel.app', // Replace with your frontend's URL
+}));
 
 // Endpoint to handle file upload and get all columns with data analysis
 app.post('/upload', upload.single('file'), (req, res) => {
