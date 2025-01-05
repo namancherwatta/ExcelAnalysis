@@ -349,7 +349,7 @@ const App = () => {
         <button onClick={handleCompareChange}>Compare Columns</button>
       </div>
       <div id="screenshotofcompare" className="chart-container">{renderComparisonCharts()}</div>
-      {data && <button className="download-button screenshotofcompare" onClick={(e)=>{ downloadChart(e)}}>Download Chart</button>}
+      {compareData && <button className="download-button screenshotofcompare" onClick={(e)=>{ downloadChart(e)}}>Download Chart</button>}
 
 
     </div>
