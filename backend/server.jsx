@@ -11,7 +11,7 @@ const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
 app.use(cors({
-  origin: 'https://excel-analysis-18qn.vercel.app', // Replace with your frontend's URL
+  origin: 'https://excel-analysis-18qn.vercel.app',methods:["GET","POST","PUT","DELETE"] // Replace with your frontend's URL
 }));
 
 // Endpoint to handle file upload and get all columns with data analysis
