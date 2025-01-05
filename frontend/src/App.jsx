@@ -3,7 +3,9 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line, P
 import html2canvas from 'html2canvas';
 import './App.css';
 
+
 const App = () => {
+  const backendURL=process.env.REACT_APP_BACK_END_URL;
   const [data, setData] = useState(null); // Data for the selected column
   const [compareData, setCompareData] = useState(null); // Data for the comparison of two columns
   const [columns, setColumns] = useState([]); // Column names for dropdown
@@ -20,7 +22,7 @@ const App = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:3001/upload', {
+      const response = await fetch(`backendURL/upload`, {
         method: 'POST',
         body: formData, // Use FormData to send the file
       });
@@ -67,7 +69,7 @@ const App = () => {
       formData.append('column2', selectedColumn2);
       formData.append('metric',metric)
       try {
-        const response = await fetch('http://localhost:3001/compare', {
+        const response = await fetch(`backendURL/compare`, {
           method: 'POST',
           body: formData,
         });
