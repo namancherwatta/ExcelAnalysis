@@ -58,6 +58,7 @@ const App = () => {
       setData(null); // Reset data if no column selected
     }
   };
+  
 
   // Handle column selection for comparison
   const handleCompareChange = async () => {
