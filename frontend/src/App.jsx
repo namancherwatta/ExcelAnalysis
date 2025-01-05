@@ -172,10 +172,10 @@ const App = () => {
               cx="50%"
               cy="50%"
               outerRadius={80}
-              fill={getDynamicColor(index)}
+              fill="#8884d8"
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#8884d8' : '#82ca9d'} />
+                <Cell key={`cell-${index}`} fill={getDynamicColor(index)}/>
               ))}
             </Pie>
             <Tooltip />
