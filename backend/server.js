@@ -10,9 +10,6 @@ const upload = multer({ dest: 'uploads/' });
 
 
 app.use(express.json());
-// app.use(cors({
-//   origin: 'https://excel-analysis-18qn.vercel.app',methods:["POST"],allowedHeaders: ['Content-Type', 'Authorization'], // Replace with your frontend's URL
-// }));
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
