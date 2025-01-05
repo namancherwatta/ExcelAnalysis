@@ -10,9 +10,16 @@ const upload = multer({ dest: 'uploads/' });
 
 
 app.use(express.json());
-app.use(cors({
-  origin: 'https://excel-analysis-18qn.vercel.app',methods:["POST"],allowedHeaders: ['Content-Type', 'Authorization'], // Replace with your frontend's URL
-}));
+// app.use(cors({
+//   origin: 'https://excel-analysis-18qn.vercel.app',methods:["POST"],allowedHeaders: ['Content-Type', 'Authorization'], // Replace with your frontend's URL
+// }));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 
 // Endpoint to handle file upload and get all columns with data analysis
 app.post('/upload', upload.single('file'), (req, res) => {
